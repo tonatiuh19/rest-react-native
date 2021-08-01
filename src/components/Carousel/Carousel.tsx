@@ -5,9 +5,9 @@ import Carousel, { Pagination } from "react-native-x2-carousel";
 import { MaterialIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
+import { decode_utf8 } from "../../resources/Decode/Decode";
 
 const CarouselCard = (props: any) => {
-  console.log("props", props);
   const DATA = [
     {
       id: 1,
@@ -57,11 +57,14 @@ const CarouselCard = (props: any) => {
 
   const renderTypeIcon = (type: number) => {
     if (type == 1) {
-      return <FontAwesome5 name="glass-cheers" size={18} />;
-    } else if (type == 2) {
-      return <Entypo name="box" size={18} />;
-    } else if (type == 2) {
-      return <FontAwesome5 name="parking" size={18} />;
+      return <FontAwesome5 name="restroom" size={18} />;
+    } else if (type == 3) {
+      return (
+        <Text>
+          <FontAwesome5 name="restroom" size={18} />{" "}
+          <FontAwesome5 name="shower" size={18} />
+        </Text>
+      );
     }
   };
 
@@ -78,7 +81,7 @@ const CarouselCard = (props: any) => {
         <Text style={page.containerTitle}>
           {renderTypeIcon(props.spaceType)}
           &nbsp;
-          {props.title}
+          {decode_utf8(props.title)}
         </Text>
         <Text style={page.containerPrice}>
           {formatter.format(Number(props.price))}
@@ -87,7 +90,7 @@ const CarouselCard = (props: any) => {
       <View>
         <Text style={page.containerPlace}>
           <MaterialIcons name="place" size={14} color="black" />
-          {props.place}
+          {decode_utf8(props.place)}
         </Text>
       </View>
     </View>

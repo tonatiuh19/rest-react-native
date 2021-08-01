@@ -10,7 +10,7 @@ import * as React from "react";
 
 import Colors from "../constants/Colors";
 import useColorScheme from "../hooks/useColorScheme";
-import TabOneScreen from "../screens/TabOneScreen";
+import TabOneApp from "../screens/TabOneScreen";
 import TabTwoScreen from "../screens/TabTwoScreen";
 import { BottomTabParamList, TabOneParamList, TabTwoParamList } from "../types";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -22,14 +22,21 @@ export default function BottomTabNavigator() {
 
   return (
     <BottomTab.Navigator
-      initialRouteName="Espacio"
+      initialRouteName="Baños"
       tabBarOptions={{
         activeTintColor: "#8acc4b",
-        style: { backgroundColor: "#000000" },
+        style: {
+          backgroundColor: "#000000",
+          elevation: 0, // for Android
+          shadowOffset: {
+            width: 0,
+            height: 0, // for iOS
+          },
+        },
       }}
     >
       <BottomTab.Screen
-        name="Espacio"
+        name="Baños"
         component={TabOneNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="place" color={color} />,
@@ -66,7 +73,7 @@ function TabOneNavigator() {
     <TabOneStack.Navigator>
       <TabOneStack.Screen
         name="EspacioScreen"
-        component={TabOneScreen}
+        component={TabOneApp}
         options={{ headerTitle: "Espacio", headerShown: false }}
       />
     </TabOneStack.Navigator>
@@ -81,7 +88,7 @@ function TabTwoNavigator() {
       <TabTwoStack.Screen
         name="TableroScreen"
         component={TabTwoScreen}
-        options={{ headerTitle: "Mi tablero" }}
+        options={{ headerTitle: "Mi tablero", headerShown: false }}
       />
     </TabTwoStack.Navigator>
   );

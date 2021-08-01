@@ -15,15 +15,13 @@ if($method == 'POST'){
         $longitude = $params['longitude'];
 
         if($latitude == '0' || $longitude == '0'){
-            $sql = "SELECT a.id_space, a.email_user, a.price, a.title, a.space_type, a.space_sub_type, a.id_adress, a.description, b.name as 'space_sub_type_name', c.name as 'space_type_name', d.latitude, d.longitude, d.city, d.state 
-            FROM spaces as a
-            INNER JOIN spaces_sub_types as b on b.id=a.space_sub_type
+            $sql = "SELECT a.id_space, a.email_user, a.price, a.title, a.space_type, a.id_adress, a.description, c.name as 'space_sub_type_name', c.name as 'space_type_name', d.latitude, d.longitude, d.city, d.state 
+            FROM spaces as a            
             INNER JOIN spaces_types as c on c.id=a.space_type
             LEFT JOIN addresses as d on d.id_adresss=a.id_adress";
         }else{
-            $sql = "SELECT a.id_space, a.email_user, a.price, a.title, a.space_type, a.space_sub_type, a.id_adress, a.description, b.name as 'space_sub_type_name', c.name as 'space_type_name', d.latitude, d.longitude, d.city, d.state 
+            $sql = "SELECT a.id_space, a.email_user, a.price, a.title, a.space_type, a.id_adress, a.description, c.name as 'space_sub_type_name', c.name as 'space_type_name', d.latitude, d.longitude, d.city, d.state 
 			FROM spaces as a
-			INNER JOIN spaces_sub_types as b on b.id=a.space_sub_type
 			INNER JOIN spaces_types as c on c.id=a.space_type
 			LEFT JOIN addresses as d on d.id_adresss=a.id_adress
 			WHERE ABS(d.latitude-".$latitude.")<0.5 and ABS(d.longitude-(".$longitude."))<0.5";

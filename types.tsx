@@ -9,7 +9,7 @@ export type RootStackParamList = {
 };
 
 export type BottomTabParamList = {
-  Espacio: undefined;
+  Baños: undefined;
   Tablero: undefined;
 };
 

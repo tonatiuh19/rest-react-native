@@ -3,7 +3,11 @@ import { Text, View } from "react-native";
 import { page } from "./PlacesSearcher.style";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
-const PlacesSearcher = () => {
+const PlacesSearcher = (props: any) => {
+  const handleChange = (coordenates: any) => {
+    props.onChange(coordenates);
+  };
+
   return (
     <View data-testid="PlacesSearcher" style={page.container}>
       <GooglePlacesAutocomplete
@@ -11,7 +15,8 @@ const PlacesSearcher = () => {
         fetchDetails={true}
         onPress={(data, details: any) => {
           // 'details' is provided when fetchDetails = true
-          console.log(details.geometry.location);
+          //console.log(details.geometry.location);
+          handleChange(details.geometry.location);
         }}
         query={{
           key: "AIzaSyAzm7z1Vn8yZyPLs0rHwdWM6GxzLgaUE6A",

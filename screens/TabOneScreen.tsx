@@ -7,6 +7,7 @@ import {
   FlatList,
   Dimensions,
   RefreshControl,
+  TouchableOpacity,
 } from "react-native";
 import * as Location from "expo-location";
 import { Text, View } from "../components/Themed";
@@ -17,6 +18,55 @@ import { Entypo } from "@expo/vector-icons";
 import CarouselCard from "../src/components/Carousel/Carousel";
 import PlacesSearcher from "../src/components/PlacesSearcher/PlacesSearcher";
 import { ScrollView } from "react-native-gesture-handler";
+import { Ionicons } from "@expo/vector-icons";
+
+import { NavigationContainer } from "@react-navigation/native";
+import {
+  createStackNavigator,
+  HeaderBackButton,
+  CardStyleInterpolators,
+} from "@react-navigation/stack";
+import TabOneItem from "./TabOneItem/TabOneItem";
+import BackButton from "../src/components/BackButton/BackButton";
+
+const Stack = createStackNavigator();
+
+function TabOneApp() {
+  return (
+    <Stack.Navigator
+      initialRouteName="TabOneScreen"
+      screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+      }}
+    >
+      <Stack.Screen
+        name="TabOneScreen"
+        options={{ headerShown: false }}
+        component={TabOneScreen}
+      />
+      <Stack.Screen
+        name="TabOneItem"
+        component={TabOneItem}
+        options={{ headerShown: false }}
+        /*options={({ navigation, route }) => ({
+          headerLeft: (props) => (
+            <TouchableOpacity
+              {...props}
+              onPress={() => {
+                navigation.goBack(null);
+              }}
+            >
+              <BackButton title={"Baños"}></BackButton>
+            </TouchableOpacity>
+          ),
+          title: "My home",
+        })}*/
+      />
+    </Stack.Navigator>
+  );
+}
+
+export default TabOneApp;
 
 const { RNAndroidOpenSettings } = NativeModules;
 const { height, width } = Dimensions.get("window");
@@ -24,7 +74,7 @@ const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
-export default function TabOneScreen() {
+function TabOneScreen({ navigation }) {
   const [location, setLocation] = useState({
     latitude: "",
     longitude: "",
@@ -71,15 +121,14 @@ export default function TabOneScreen() {
   const gettingSpaccio = (lat: string, long: string) => {
     getSpacios(lat, long)
       .then((x) => {
-        if (x !== 0 && typeof x === "string") {
-          setLoading(false);
-          console.log("si", x);
+        console.log(x);
+        if (x === 0 || typeof x === "string") {
           setAlertMessage(x);
           setLocationAlert(true);
         } else {
-          setLoading(false);
           setSpacesData(x);
         }
+        setLoading(false);
       })
       .finally();
   };
@@ -112,81 +161,137 @@ export default function TabOneScreen() {
     }
   };
 
+  const handleChange = (coordenates: any) => {
+    setLoading(true);
+    gettingSpaccio(coordenates.lat.toString(), coordenates.lng.toString());
+  };
+
+  const addPlace = () => {
+    console.log("HOla");
+  };
+
+  const onNavigateCard = (item: any) => {
+    navigation.navigate("TabOneItem", {
+      item: item,
+    });
+  };
+
   useEffect(() => {
     initialData();
   }, []);
 
   return (
     <View style={styles.container}>
-      {loading ? (
-        <Loading></Loading>
-      ) : (
-        <View>
-          <AwesomeAlert
-            show={locationAlert}
-            showProgress={false}
-            title=""
-            message={
-              <Text>
-                Parece que no tienes señal&nbsp;
-                <Entypo name="emoji-sad" size={24} color="black" />
-              </Text>
-            }
-            messageStyle={{
-              color: "#000000",
-              fontSize: 20,
-              textAlign: "center",
-            }}
-            alertContainerStyle={{ backgroundColor: "#ededed" }}
-            closeOnTouchOutside={false}
-            closeOnHardwareBackPress={false}
-            showCancelButton={false}
-            showConfirmButton={true}
-            cancelText="No, cancel"
-            confirmText="Volver a intentar"
-            confirmButtonColor="#8acc4b"
-            confirmButtonTextStyle={{ fontSize: 20 }}
-            onCancelPressed={() => {
-              dismissLocationAlert();
-            }}
-            onConfirmPressed={() => {
-              setLocationAlert(false);
-              initialData();
-            }}
-          />
-          <ScrollView
-            style={{
-              paddingTop: height * 0.08,
-              width: width * 0.9,
-              zIndex: 1,
-            }}
-            keyboardShouldPersistTaps={"handled"}
-          >
-            <PlacesSearcher></PlacesSearcher>
-          </ScrollView>
-          <ScrollView
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
-            <FlatList
-              data={spacesData}
-              renderItem={(x: any) => {
-                console.log(x.item);
-                return (
-                  <CarouselCard
-                    title={x.item.title}
-                    price={x.item.price}
-                    place={x.item.city + ", " + x.item.state}
-                    spaceType={x.item.space_type}
-                  ></CarouselCard>
-                );
+      <AwesomeAlert
+        show={locationAlert}
+        showProgress={false}
+        title=""
+        message={
+          <Text>
+            Parece que no tienes señal&nbsp;
+            <Entypo name="emoji-sad" size={24} color="black" />
+          </Text>
+        }
+        messageStyle={{
+          color: "#000000",
+          fontSize: 20,
+          textAlign: "center",
+        }}
+        alertContainerStyle={{ backgroundColor: "#ededed" }}
+        closeOnTouchOutside={false}
+        closeOnHardwareBackPress={false}
+        showCancelButton={false}
+        showConfirmButton={true}
+        cancelText="No, cancel"
+        confirmText="Volver a intentar"
+        confirmButtonColor="#8acc4b"
+        confirmButtonTextStyle={{ fontSize: 20 }}
+        onCancelPressed={() => {
+          dismissLocationAlert();
+        }}
+        onConfirmPressed={() => {
+          setLocationAlert(false);
+          initialData();
+        }}
+      />
+
+      <View>
+        {spacesData.length ? (
+          <View>
+            <ScrollView
+              style={{
+                paddingTop: height * 0.09,
+                width: width * 0.9,
+                zIndex: 1,
               }}
-              keyExtractor={(item, index: any) => index}
-            />
-          </ScrollView>
-        </View>
-      )}
+              keyboardShouldPersistTaps={"handled"}
+            >
+              <PlacesSearcher onChange={handleChange}></PlacesSearcher>
+            </ScrollView>
+            <ScrollView
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor="white"
+                  colors={["white"]}
+                />
+              }
+            >
+              {loading ? (
+                <Loading></Loading>
+              ) : (
+                <FlatList
+                  data={spacesData}
+                  renderItem={(x: any) => {
+                    return (
+                      <TouchableOpacity onPress={() => onNavigateCard(x)}>
+                        <CarouselCard
+                          title={x.item.title}
+                          price={x.item.price}
+                          place={x.item.city + ", " + x.item.state}
+                          spaceType={x.item.space_type}
+                        ></CarouselCard>
+                      </TouchableOpacity>
+                    );
+                  }}
+                  keyExtractor={(item, index: any) => index}
+                />
+              )}
+            </ScrollView>
+          </View>
+        ) : (
+          <View>
+            <ScrollView
+              style={{
+                paddingTop: height * 0.5,
+                width: width * 0.9,
+                zIndex: 1,
+              }}
+              keyboardShouldPersistTaps={"handled"}
+            >
+              <View style={styles.noData}>
+                <Entypo name="emoji-sad" size={24} color="black" />
+                <Text style={styles.noDataTitle}>
+                  Aun no hay baños para este sitio{" "}
+                </Text>
+              </View>
+              <PlacesSearcher onChange={handleChange}></PlacesSearcher>
+              <View style={styles.noDataButton}>
+                <TouchableOpacity
+                  style={styles.noDataButtonAdd}
+                  onPress={addPlace}
+                >
+                  <Text style={styles.noDataButtonAddTitle}>
+                    Añade un baño aqui y gana dinero{" "}
+                    <Ionicons name="happy-sharp" size={17} />
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </ScrollView>
+          </View>
+        )}
+      </View>
     </View>
   );
 }
@@ -205,5 +310,33 @@ const styles = StyleSheet.create({
     marginVertical: 30,
     height: 1,
     width: "80%",
+  },
+  noData: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10,
+
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  noDataTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  noDataButton: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingTop: "15%",
+  },
+  noDataButtonAdd: {
+    backgroundColor: "#8acc4b",
+    padding: 10,
+    borderRadius: 10,
+  },
+  noDataButtonAddTitle: {
+    fontSize: 15,
+    color: "#f5f7f2",
   },
 });
