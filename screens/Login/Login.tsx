@@ -2,13 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Text, View, TouchableOpacity, TextInput } from "react-native";
 import { page } from "./Login.style";
 
-const Login = () => {
+const Login = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const onNavigateSignUp = () => {
+    navigation.navigate("TabOneItem");
+  };
+
   return (
     <View style={page.container}>
-      <Text style={page.logo}>HeyAPP</Text>
+      <Text style={page.logo}>Iniciar sesión</Text>
       <View style={page.inputView}>
         <TextInput
           style={page.inputText}
@@ -32,7 +36,7 @@ const Login = () => {
       <TouchableOpacity style={page.loginBtn}>
         <Text style={page.loginText}>Entrar</Text>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => onNavigateSignUp()}>
         <Text style={page.signUpText}>Registro</Text>
       </TouchableOpacity>
     </View>

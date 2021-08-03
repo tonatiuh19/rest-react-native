@@ -49,6 +49,7 @@ export default function BottomTabNavigator() {
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="dashboard" color={color} />
           ),
+          tabBarBadge: 3,
         }}
       />
     </BottomTab.Navigator>

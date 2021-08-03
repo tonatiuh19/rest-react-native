@@ -10,7 +10,7 @@ export const page = StyleSheet.create({
   logo: {
     fontWeight: "bold",
     fontSize: 50,
-    color: "#fb5b5a",
+    color: "#030000",
     marginBottom: 40,
   },
   inputView: {
